@@ -27,35 +27,33 @@ void setup() {
 }
 
 void loop() {
+  //本当はここをfalseではじめたい、けどうまくいかないので後回し
+  boolean button = false;
   //======button=====
-  if(digitalRead(BUTTON_PIN)==HIGH){
-    //
+  if(digitalRead(BUTTON_PIN)==LOW){
+    button = true;
   }
-
-  //======servo=====
-  for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
-    // in steps of 1 degree
-    myservo.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(150);                       // waits 15ms for the servo to reach the position
+  if(button){
+    //===========sensor==========
+    digitalWrite( SENSOR_TRIG_PIN, LOW); 
+    delayMicroseconds(2); 
+    digitalWrite( SENSOR_TRIG_PIN, HIGH ); //超音波を出力
+    delayMicroseconds( 10 ); //
+    digitalWrite( SENSOR_TRIG_PIN, LOW );
+    Duration = pulseIn( SENSOR_ECHO_PIN, HIGH ); //センサからの入力
+    if (Duration > 0) {
+      Duration = Duration/2; //往復距離を半分にする
+      Distance = Duration*340*100/1000000; // 音速を340m/sに設定
+      Serial.print("Distance:");
+      Serial.print(Distance);
+      Serial.println(" cm");
+    }
+    //======servo=====
+    for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
+      // in steps of 1 degree
+      myservo.write(pos);              // tell servo to go to position in variable 'pos'
+      delay(15);                       // waits 15ms for the servo to reach the position
+    }
   }
-  for (pos = 180; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
-    myservo.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(150);                       // waits 15ms for the servo to reach the position
-  }
-  //===========sensor==========
-  digitalWrite( SENSOR_TRIG_PIN, LOW); 
-  delayMicroseconds(2); 
-  digitalWrite( SENSOR_TRIG_PIN, HIGH ); //超音波を出力
-  delayMicroseconds( 10 ); //
-  digitalWrite( SENSOR_TRIG_PIN, LOW );
-  Duration = pulseIn( SENSOR_ECHO_PIN, HIGH ); //センサからの入力
-  if (Duration > 0) {
-    Duration = Duration/2; //往復距離を半分にする
-    Distance = Duration*340*100/1000000; // 音速を340m/sに設定
-    Serial.print("Distance:");
-    Serial.print(Distance);
-    Serial.println(" cm");
-  }
-  delay(500);
 }
 
